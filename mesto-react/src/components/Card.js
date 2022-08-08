@@ -7,19 +7,17 @@ function Card(card) { //или так: function Card(props) {
     }
 
     return (
-        <>
-            <article className="element">
-                <img className="element__image" src={card.link} alt={card.name} onClick={handleClick}/>
-                <div className="element__description">
-                    <h2 className="element__title">{card.name}</h2>
-                    <div className="element__likeBox">
-                        <button className="element__like" type="button"></button>
-                        <h4 className="element__likeCounter">{card.likes}</h4>
-                    </div>
+        <article className="element">
+            <img className="element__image" src={card.link} alt={card.name} onClick={handleClick}/>
+            <div className="element__description">
+                <h2 className="element__title">{card.name}</h2>
+                <div className="element__likeBox">
+                    <button className="element__like" type="button"></button>
+                    <h4 className="element__likeCounter">{card.likes}</h4>
                 </div>
-                <button className="element__delete" type="button"></button>
-            </article>
-        </>
+            </div>
+            <button className="element__delete" type="button"></button>
+        </article>
     );
 }
 

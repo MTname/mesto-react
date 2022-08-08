@@ -22,7 +22,7 @@ function PopupWithForm({ name, title, btnText, children, isOpen, onClose }) {
         <div className="popup__box" onClick={(event) => {event.stopPropagation()}}>
             <button className="popup__close-button" onClick={onClose} type="button"></button>
             <h2 className="popup__title">{title}</h2>
-            <form className="popup__form" name={`form-${name}`} noValidate>
+            <form className="popup__form" name={`form-${name}`}>
                 {children}
                 <button className="popup__save-button" type="submit">{btnText}</button>
             </form>
