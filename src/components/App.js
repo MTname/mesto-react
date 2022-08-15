@@ -1,16 +1,16 @@
 import React from "react";
 
 import 'index.css';
-import Header from './Header';
-import Main from './Main';
-import Footer from './Footer';
 import { useState } from 'react';
-import PopupWithForm from './PopupWithForm';
+import Footer from './Footer';
+import Header from './Header';
 import ImagePopup from './ImagePopup';
+import Main from './Main';
+import PopupWithForm from './PopupWithForm';
 
 function App() {
     
-    // императивное закрытие на Esc (декларативное см. PopupWithForm.js/ImagePopup.js)
+    // императивное закрытие на Esc (декларативное см. ниже)
     // const handleEscClose = (event) => {
     //     if (event.key === 'Escape') {
     //         closeAllPopups();
@@ -42,9 +42,9 @@ function App() {
     };
     
     const [selectedCard, setSelectedCard] = useState(null);
-    //или так (см. ImagePopup.js стр. 32, 33): const [selectedCard, setSelectedCard] = useState({ isOpen: false, card: {} });
+    //или так (см. ImagePopup.js стр. 18, 19): const [selectedCard, setSelectedCard] = useState({ isOpen: false, card: {} });
     const handleCardClick = (card) => {
-        setSelectedCard(card); //или так (см. ImagePopup.js стр. 32, 33): setSelectedCard({ isOpen: true, card: card });
+        setSelectedCard(card); //или так (см. ImagePopup.js стр. 18, 19): setSelectedCard({ isOpen: true, card: card });
         // document.addEventListener('keydown', handleEscClose); // императивное закрытие на Esc
     };
 
@@ -53,9 +53,25 @@ function App() {
         setEditProfilePopupOpen(false);
         setAddPlacePopupOpen(false);
         setDeleteCardPopupOpen(false);
-        setSelectedCard(null); //или так (см. ImagePopup.js стр. 32, 33): setSelectedCard({ isOpen: false, card: {} });
+        setSelectedCard(null); //или так (см. ImagePopup.js стр. 18, 19): setSelectedCard({ isOpen: false, card: {} });
         // document.removeEventListener('keydown', handleEscClose); // императивное закрытие на Esc
     };
+    
+    // декларативное закрытие на Esc
+    const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isDeleteCardPopupOpen || selectedCard;
+    React.useEffect(() => {
+        function handleEscClose(event) {
+            if(event.key === 'Escape') {
+                closeAllPopups();
+            }
+        }
+        if(isOpen) {
+            document.addEventListener('keydown', handleEscClose);
+            return () => {
+                document.removeEventListener('keydown', handleEscClose);
+            };
+        }
+    }, [isOpen]);
     
     return (
         <div className="page">

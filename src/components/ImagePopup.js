@@ -1,20 +1,6 @@
 import React from "react";
 
 function ImagePopup({ name, card, isOpen, onClose }) {
-
-    // декларативное закрытие на Esc
-    React.useEffect(() => {
-        const handleEscClose = (event) => {
-            if (event.key === 'Escape') {
-                onClose();
-            }
-        };
-        if (isOpen) {
-            document.addEventListener('keydown', handleEscClose);
-        } else {
-            document.removeEventListener('keydown', handleEscClose);
-        }
-    }, [isOpen, onClose]);
     
     return (
     <div className={`popup popup_type_${name} ${isOpen ? "popup_active" : ''}`} onClick={onClose}>
@@ -29,5 +15,5 @@ function ImagePopup({ name, card, isOpen, onClose }) {
 
 export default ImagePopup;
 
-//или так (стр.23): <img className="popup__image" src={`${card.card.link}`} alt={`${card.card.name}`}/>
-//или так (стр.24): <p className="popup__subtitle">{`${card.card.name}`}</p>
+//или так (стр.9): <img className="popup__image" src={`${card.card.link}`} alt={`${card.card.name}`}/>
+//или так (стр.10): <p className="popup__subtitle">{`${card.card.name}`}</p>

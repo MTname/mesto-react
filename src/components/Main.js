@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Card from "./Card";
 import api from "../utils/Api";
+import Card from "./Card";
 
 function Main({ onEditAvatar, onEditProfile, onAddPlace, onDeleteCardClick, onCardClick }) {
     const [cards, setCards] = useState([]);
@@ -36,7 +36,6 @@ function Main({ onEditAvatar, onEditProfile, onAddPlace, onDeleteCardClick, onCa
             {cards.map((data) => {
                 return (
                     <Card
-                        card={data}
                         key={data._id}
                         name={data.name}
                         link={data.link}
