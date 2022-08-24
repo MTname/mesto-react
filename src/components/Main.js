@@ -1,46 +1,31 @@
-import React, { useState } from "react";
-import api from "../utils/Api";
+import React from "react";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import Card from "./Card";
 
-function Main({ onEditAvatar, onEditProfile, onAddPlace, onDeleteCardClick, onCardClick }) {
-    const [cards, setCards] = useState([]);
-    const [userName, setUserName] = useState('');
-    const [userAvatar, setUserAvatar] = useState('');
-    const [userDescription, setUserDescription] = useState('');
+function Main({ onEditAvatar, onEditProfile, onAddPlace, onCardDelete, onCardClick, cards, onCardLike }) {
 
-    React.useEffect(() => {
-        Promise.all([api.getUser(), api.getCards()])
-        .then(([user, cards]) => {
-            setUserName(user.name);
-            setUserDescription(user.about);
-            setUserAvatar(user.avatar);
-            setCards(cards);
-        })
-        .catch((err) => {
-            console.log(err); // выведем ошибку в консоль
-        });
-    }, []);
+    const currentUser = React.useContext(CurrentUserContext);
     
     return (
     <main className="content">
         <section className="profile content__profile-gap">
-            <button className="profile__avatar" onClick={onEditAvatar} type="button" aria-label="Кнопка редактирования аватара" style={{ backgroundImage: `url(${userAvatar})` }}></button>
+            <button className="profile__avatar" onClick={onEditAvatar} type="button" aria-label="Кнопка редактирования аватара" style={{ backgroundImage: `url(${currentUser?.avatar})` }}></button>
             <div className="profile__info">
-                <h1 className="profile__name">{userName}</h1>
+                <h1 className="profile__name">{currentUser?.name}</h1>
                 <button className="profile__edit-button" onClick={onEditProfile} type="button" aria-label="Кнопка редактирования профиля"></button>
-                <p className="profile__text">{userDescription}</p>
+                <p className="profile__text">{currentUser?.about}</p>
             </div>
             <button className="profile__add-button" onClick={onAddPlace} type="button" aria-label="Кнопка добавления карточки"></button>
         </section>
         <section className="elements" aria-label="Каталог изображений">
-            {cards.map((data) => {
+            {cards?.map((card) => {
                 return (
                     <Card
-                        key={data._id}
-                        name={data.name}
-                        link={data.link}
-                        likes={data.likes.length}
+                        key={card._id}
                         onCardClick={onCardClick}
+                        onCardLike={onCardLike}
+                        card={card}
+                        onCardDelete={onCardDelete}
                     />
                 )
             })}

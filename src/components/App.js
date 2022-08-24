@@ -1,64 +1,48 @@
-import React from "react";
-
 import 'index.css';
-import { useState } from 'react';
+import React from "react";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import api from "../utils/Api";
+import AddPlacePopup from './AddPlacePopup';
+import EditAvatarPopup from './EditAvatarPopup';
+import EditProfilePopup from './EditProfilePopup';
 import Footer from './Footer';
 import Header from './Header';
 import ImagePopup from './ImagePopup';
 import Main from './Main';
-import PopupWithForm from './PopupWithForm';
 
 function App() {
     
-    // императивное закрытие на Esc (декларативное см. ниже)
-    // const handleEscClose = (event) => {
-    //     if (event.key === 'Escape') {
-    //         closeAllPopups();
-    //     }
-    // };
-    
-    const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
+    const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
     const handleEditAvatarClick = () => {
         setEditAvatarPopupOpen(!isEditAvatarPopupOpen);
-        // document.addEventListener('keydown', handleEscClose); // императивное закрытие на Esc
     };
     
-    const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
+    const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
     const handleEditProfileClick = () => {
         setEditProfilePopupOpen(!isEditProfilePopupOpen);
-        // document.addEventListener('keydown', handleEscClose); // императивное закрытие на Esc
     };
     
-    const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false);
+    const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
     const handleAddPlaceClick = () => {
         setAddPlacePopupOpen(!isAddPlacePopupOpen);
-        // document.addEventListener('keydown', handleEscClose); // императивное закрытие на Esc
+    };
+    const [selectedCard, setSelectedCard] = React.useState(null);
+    const handleCardClick = (card) => {
+        setSelectedCard(card);
     };
 
-    const [isDeleteCardPopupOpen, setDeleteCardPopupOpen] = useState(false);
-    const handleDeleteCardClick = () => {
-        setDeleteCardPopupOpen(!isDeleteCardPopupOpen);
-        // document.addEventListener('keydown', handleEscClose); // императивное закрытие на Esc
-    };
-    
-    const [selectedCard, setSelectedCard] = useState(null);
-    //или так (см. ImagePopup.js стр. 18, 19): const [selectedCard, setSelectedCard] = useState({ isOpen: false, card: {} });
-    const handleCardClick = (card) => {
-        setSelectedCard(card); //или так (см. ImagePopup.js стр. 18, 19): setSelectedCard({ isOpen: true, card: card });
-        // document.addEventListener('keydown', handleEscClose); // императивное закрытие на Esc
-    };
+    const [cards, setCards] = React.useState([]);
+    const [currentUser, setCurrentUser] = React.useState({});
 
     const closeAllPopups = () => {
         setEditAvatarPopupOpen(false);
         setEditProfilePopupOpen(false);
         setAddPlacePopupOpen(false);
-        setDeleteCardPopupOpen(false);
-        setSelectedCard(null); //или так (см. ImagePopup.js стр. 18, 19): setSelectedCard({ isOpen: false, card: {} });
-        // document.removeEventListener('keydown', handleEscClose); // императивное закрытие на Esc
+        setSelectedCard(null);
     };
     
     // декларативное закрытие на Esc
-    const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isDeleteCardPopupOpen || selectedCard;
+    const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard;
     React.useEffect(() => {
         function handleEscClose(event) {
             if(event.key === 'Escape') {
@@ -72,37 +56,86 @@ function App() {
             };
         }
     }, [isOpen]);
+
+    // загрузка данных пользователя
+    React.useEffect(() => {
+        api.getUser()
+        .then((res) => setCurrentUser(res))
+        .catch((err) => console.log(err)); // выведем ошибку в консоль
+    }, []);
     
+    // загрузка карточек
+    React.useEffect(() => {
+        api.getCards()
+        .then((res) => setCards(res))
+        .catch((err) => console.log(err));
+    }, []);
+    
+    const handleUpdateAvatar = (avatarData) => {
+        api.editAvatar(avatarData)
+        .then((newData) => {
+            setCurrentUser(newData);
+            closeAllPopups();
+        })
+        .catch((err) => console.log(err));
+    };
+    
+    const handleUpdateUser = (userData) => {
+        api.editUserInfo(userData)
+        .then((newData) => {
+            setCurrentUser(newData);
+            closeAllPopups();
+        })
+        .catch((err) => console.log(err));
+    };
+    
+    const handleAddPlaceSubmit = (cardData) => {
+        api.addCard(cardData)
+        .then((newCard) => {
+            setCards((cards) => [newCard, ...cards]);
+            closeAllPopups();
+        })
+        .catch((err) => console.log(err));
+    };
+
+    // Функция установки/снятия лайка на карточку
+    function handleCardLike(id, isLiked) {
+        api.switchLike(id, isLiked) // проверяем, есть ли уже лайк на этой(id) карточке: добавить/снять лайк
+        .then((res) => {
+            setCards(cards.map(card => card._id === res._id ? res : card)); // setCards((state) => state.map(card => card._id === res._id ? res : card));
+        })
+        .catch((err) => console.log(err));
+    }
+
+    // Функция удаления карточки
+    function handleDeleteCardClick(cardId) {
+        api.deleteCard(cardId) // проверяем _id владельца карточки: удаляем/нет
+        .then((_id) => {
+            setCards(cards.filter(card => card._id !== cardId)); // setCards((state) => state.filter(card => card._id !== cardId));
+        })
+        .catch((err) => console.log(err));
+    }
+
     return (
-        <div className="page">
-            <Header />
-            <Main
-                onEditAvatar={handleEditAvatarClick}
-                onEditProfile={handleEditProfileClick}
-                onAddPlace={handleAddPlaceClick}
-                onDeleteCardClick={handleDeleteCardClick}
-                onCardClick={handleCardClick}
-            />
-            <Footer />
-            <PopupWithForm name="avatar" title="Обновить аватар" btnText="Сохранить" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}>
-                <input className="popup__form-input popup__form-input_value_text" id="input-avatar" type="url" name="avatarUrl" placeholder="Путь файла фото" autoComplete="off" minLength={2} required/>
-                <span className="popup__form-input-error input-avatar-error"></span>
-            </PopupWithForm>
-            <PopupWithForm name="info" title="Редактировать профиль" btnText="Сохранить" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
-                <input className="popup__form-input popup__form-input_value_name" id="input-title" type="text" name="author" placeholder="Введите имя" autoComplete="off" minLength={2} maxLength={40} required/>
-                <span className="popup__form-input-error input-title-error"></span>
-                <input className="popup__form-input popup__form-input_value_text" id="input-job" type="text" name="text" placeholder="Профессия, интересы" autoComplete="off" minLength={2} maxLength={200} required/>
-                <span className="popup__form-input-error input-job-error"></span>
-            </PopupWithForm>
-            <PopupWithForm name="card-item" title="Новое место" btnText="Создать" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
-                <input className="popup__form-input popup__form-input_value_name" id="input-name" type="text" name="placeName" placeholder="Название" autoComplete="off" minLength={2} maxLength={30} required/>
-                <span className="popup__form-input-error input-name-error"></span>
-                <input className="popup__form-input popup__form-input_value_text" id="input-link" type="url" name="text" placeholder="Путь файла фото" autoComplete="off" minLength={2} required/>
-                <span className="popup__form-input-error input-link-error"></span>
-            </PopupWithForm>
-            <PopupWithForm name="deleteCard" title="Вы уверены?" btnText="Да" isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups}></PopupWithForm>
-            <ImagePopup name="photo" isOpen={!!selectedCard} /*или так: isOpen={selectedCard.isOpen}*/ card={selectedCard} onClose={closeAllPopups}></ImagePopup>
-        </div>
+        <CurrentUserContext.Provider value={currentUser}>
+            <div className="page">
+                <Header />
+                <Main
+                    onEditAvatar={handleEditAvatarClick}
+                    onEditProfile={handleEditProfileClick}
+                    onAddPlace={handleAddPlaceClick}
+                    onCardDelete={handleDeleteCardClick}
+                    onCardClick={handleCardClick}
+                    cards={cards}
+                    onCardLike={handleCardLike}
+                />
+                <Footer />
+                <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}  onUpdateAvatar={handleUpdateAvatar} />
+                <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+                <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
+                <ImagePopup name="photo" isOpen={!!selectedCard} card={selectedCard} onClose={closeAllPopups} />
+            </div>
+        </CurrentUserContext.Provider>
     );
 }
 

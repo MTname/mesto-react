@@ -14,6 +14,3 @@ function ImagePopup({ name, card, isOpen, onClose }) {
 }
 
 export default ImagePopup;
-
-//или так (стр.9): <img className="popup__image" src={`${card.card.link}`} alt={`${card.card.name}`}/>
-//или так (стр.10): <p className="popup__subtitle">{`${card.card.name}`}</p>

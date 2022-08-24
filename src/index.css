@@ -35,6 +35,7 @@
 @import url(./blocks/element/__like/_active/element__like_active.css);
 @import url(./blocks/element/__likeCounter/element__likeCounter.css);
 @import url(./blocks/element/__delete/element__delete.css);
+@import url(./blocks/element/__delete/_removed/element__delete_removed.css);
 
 /*footer*/
 @import url(./blocks/footer/footer.css);
