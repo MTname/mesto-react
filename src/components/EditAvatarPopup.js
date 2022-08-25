@@ -7,16 +7,16 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
     
     const handleSubmit = (event) => {
         event.preventDefault();
-        onUpdateAvatar({ 
+        onUpdateAvatar({
             avatar: avatarRef.current.value,
         });
+        avatarRef.current.value = '';
     };
     
     return (
-        <PopupWithForm name="avatar" title="Обновить аватар" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit}>
+        <PopupWithForm isFormNotValid={null} btnText="Сохранить" name="avatar" title="Обновить аватар" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit}>
             <input className="popup__form-input popup__form-input_value_text" id="input-avatar" type="url" name="avatarUrl" ref={avatarRef} placeholder="Путь файла фото" autoComplete="off" minLength={2} required/>
             <span className="popup__form-input-error input-avatar-error"></span>
-            <button className="popup__save-button" type="submit">Сохранить</button>
         </PopupWithForm>
     );
 }

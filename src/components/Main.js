@@ -18,17 +18,15 @@ function Main({ onEditAvatar, onEditProfile, onAddPlace, onCardDelete, onCardCli
             <button className="profile__add-button" onClick={onAddPlace} type="button" aria-label="Кнопка добавления карточки"></button>
         </section>
         <section className="elements" aria-label="Каталог изображений">
-            {cards?.map((card) => {
-                return (
-                    <Card
-                        key={card._id}
-                        onCardClick={onCardClick}
-                        onCardLike={onCardLike}
-                        card={card}
-                        onCardDelete={onCardDelete}
-                    />
-                )
-            })}
+            {cards?.map(card => 
+                <Card
+                    key={card._id}
+                    onCardClick={onCardClick}
+                    onCardLike={onCardLike}
+                    card={card}
+                    onCardDelete={onCardDelete}
+                />
+            )}
         </section>
     </main>
     );

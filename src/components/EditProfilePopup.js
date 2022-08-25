@@ -9,7 +9,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
     const [values, setValues] = useState({ author: '', text: '' });
     const [isErrors, setIsErrors] = useState({ author: false, text: false });
     const [errorMessages, setErrorMessages] = useState({ author: '', text: '' });
-    const [isFormNotValid, setIsFormNotValid] = useState(false);
+    const [isFormNotValid, setIsFormNotValid] = useState(false); //или const [isFormNotValid, setIsFormNotValid] = useState();
     
     React.useEffect(() => {
         setIsFormNotValid(isErrors.author || isErrors.text);
@@ -45,12 +45,11 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
     };
     
     return (
-        <PopupWithForm name="info" title="Редактировать профиль" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit}>
+        <PopupWithForm isFormNotValid={isFormNotValid} btnText="Сохранить" name="info" title="Редактировать профиль" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit}>
             <input className={`popup__form-input popup__form-input_value_name ${isErrors.author ? "popup__form-input_type_error" : ''}`} id="input-title" name="author" value={values.author} onChange={onChange} type="text" placeholder="Введите имя" autoComplete="off" minLength={2} maxLength={40} required/>
             <span className={`popup__form-input-error input-title-error ${isErrors.author ? "popup__form-input-error_type_active" : ''}`}>{errorMessages.author}</span>
             <input className={`popup__form-input popup__form-input_value_name ${isErrors.text ? "popup__form-input_type_error" : ''}`} id="input-job" name="text" value={values.text} onChange={onChange} type="text" placeholder="Профессия, интересы" autoComplete="off" minLength={2} maxLength={200} required/>
             <span className={`popup__form-input-error input-job-error ${isErrors.text ? "popup__form-input-error_type_active" : ''}`}>{errorMessages.text}</span>
-            <button className={`popup__save-button ${isFormNotValid ? "popup__save-button_disabled" : ''}`} type="submit" disabled={isFormNotValid}>Сохранить</button>
         </PopupWithForm>
     );
 }

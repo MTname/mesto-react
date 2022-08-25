@@ -12,6 +12,9 @@ import Main from './Main';
 
 function App() {
     
+    const [cards, setCards] = React.useState([]);
+    const [currentUser, setCurrentUser] = React.useState({});
+    
     const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
     const handleEditAvatarClick = () => {
         setEditAvatarPopupOpen(!isEditAvatarPopupOpen);
@@ -30,10 +33,7 @@ function App() {
     const handleCardClick = (card) => {
         setSelectedCard(card);
     };
-
-    const [cards, setCards] = React.useState([]);
-    const [currentUser, setCurrentUser] = React.useState({});
-
+    
     const closeAllPopups = () => {
         setEditAvatarPopupOpen(false);
         setEditProfilePopupOpen(false);
@@ -102,7 +102,7 @@ function App() {
     function handleCardLike(id, isLiked) {
         api.switchLike(id, isLiked) // проверяем, есть ли уже лайк на этой(id) карточке: добавить/снять лайк
         .then((res) => {
-            setCards(cards.map(card => card._id === res._id ? res : card)); // setCards((state) => state.map(card => card._id === res._id ? res : card));
+            setCards((state) => state.map(card => card._id === res._id ? res : card));
         })
         .catch((err) => console.log(err));
     }
@@ -111,7 +111,7 @@ function App() {
     function handleDeleteCardClick(cardId) {
         api.deleteCard(cardId) // проверяем _id владельца карточки: удаляем/нет
         .then((_id) => {
-            setCards(cards.filter(card => card._id !== cardId)); // setCards((state) => state.filter(card => card._id !== cardId));
+            setCards((state) => state.filter(card => card._id !== cardId));
         })
         .catch((err) => console.log(err));
     }
